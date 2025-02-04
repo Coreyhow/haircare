@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!--using pure CSS-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/grids-responsive-min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+    <style>
+      .back-button {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        color: #fff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+      }
+    
+      .back-button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+    <meta name="ir-site-verification-token" value="264802966" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Haircare Analysis</title>
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="stylesheet" href="assets/css/fontawesome.css">
+  </head>
+
+  <body>
+    <div class="container-fluid body-content">
+<div class="titlebar">
+    <h3 class="display-3">Find your haircare!</h3>
+</div>
+<div class="pure-form pure-form-stacked">
+    <form method="get" action="haircare/analysis.py">
+      <label for="porosity">Choose your porosity:</label>
+      <select id="porosity" name="porosity">
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+      </select>
+      <label for="texture">Choose your hair texture:</label>
+      <select id="texture" name="texture">
+        <option value="fine">Fine</option>
+        <option value="medium">Medium</option>
+        <option value="coarse">Coarse</option>
+      </select>
+      <label for="productname"> 1. Enter the name of the product.<br>
+        2. Enter the ingredients separated by commas. <br>
+        3. Click submit to see if it matches with what your hair needs.</label>
+        <input type="text" name="productname" placeholder="Product Name (work in progress)" size="100"
+            value="" /><br>
+        <textarea id="ingredients" name="ingredients"
+            rows=10 cols=100></textarea>
+        <div><button type="submit" class="pure-button pure-button-primary">Submit</button>
+    </form>
+</div>
+</div>
+<a href="index.html" class="back-button">Back</a>
+  </body>
+</html>

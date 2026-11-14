@@ -31,6 +31,15 @@ pytest
 
 `scraper.py` (Ulta) is kept for reference but Ulta blocks automated requests.
 
+## Store products (Sephora, Ulta) from Kaggle datasets
+1. Download these (free Kaggle account) and unzip into `data/`:
+   - [Sephora Products and Skincare Reviews](https://www.kaggle.com/datasets/nadyinky/sephora-products-and-skincare-reviews) by nadyinky (CC BY 4.0) → `data/product_info.csv` (the review files aren't needed)
+   - [E-commerce Cosmetic Products](https://www.kaggle.com/datasets/devi5723/e-commerce-cosmetics-dataset) by devi5723 (MIT) → `data/E-commerce  cosmetic dataset.csv`
+2. `python import_datasets.py`
+
+`data/` is git-ignored; only `haircare.db` needs to be committed.
+The CC BY license requires crediting the Sephora dataset; that credit is in `templates/_credits.html`, so keep it there.
+
 ## Free hosting (PythonAnywhere)
 1. Scrape locally so `haircare.db` is filled, then commit it (or upload it).
 2. Create a free account at pythonanywhere.com and open a Bash console:

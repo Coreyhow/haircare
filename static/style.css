@@ -5,3 +5,12 @@ small, .muted { color: #555; }
 .good { color: #1b6e2a; }
 .bad { color: #a3261b; }
 textarea, select, input[type=text] { width: 100%; }
+.help { margin: .25rem 0 .75rem; font-size: .92rem; }
+.help summary { cursor: pointer; color: #1f5fa8; }
+.help ul { padding-left: 1.2rem; }
+.label { display: inline-block; padding: .1rem .55rem; border-radius: 999px; font-size: .85rem; font-weight: 600; margin-right: .35rem; }
+.label-great { background: #d8f0dc; color: #1b6e2a; }
+.label-good { background: #e6f0fa; color: #1f5fa8; }
+.label-okay { background: #f1f1f1; color: #555; }
+.label-poor { background: #fbe1de; color: #a3261b; }
+.reason { margin: .35rem 0; }

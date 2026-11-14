@@ -8,8 +8,9 @@ CREATE TABLE IF NOT EXISTS products (
     productID INTEGER PRIMARY KEY AUTOINCREMENT,
     name      TEXT NOT NULL,
     brand     TEXT,
-    category  TEXT NOT NULL,   -- shampoo | conditioner | leave-in
-    url       TEXT NOT NULL UNIQUE
+    category  TEXT NOT NULL,   -- shampoo | conditioner | leave-in | hair-mask | hair-oil | ...
+    url       TEXT NOT NULL UNIQUE,  -- product page, or a unique id like 'sephora:P123'
+    source    TEXT                   -- where the data came from, e.g. 'Sephora', 'Ulta'
 );
 
 CREATE TABLE IF NOT EXISTS product_ingredients (

@@ -10,7 +10,8 @@ import stores
 
 app = Flask(__name__)
 app.jinja_env.globals["store_links"] = stores.store_links
-CATEGORIES = ["shampoo", "conditioner", "hair-mask", "hair-oil", "leave-in"]
+CATEGORIES = ["shampoo", "conditioner", "leave-in", "hair-mask", "hair-oil",
+              "scalp-treatment", "styling"]
 
 
 @app.get("/")

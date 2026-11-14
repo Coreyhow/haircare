@@ -1,0 +1,7 @@
+.container { max-width: 760px; margin: 2rem auto; padding: 0 1rem; font-family: system-ui, sans-serif; }
+fieldset { margin-bottom: 1rem; }
+small, .muted { color: #555; }
+.card { border: 1px solid #ddd; border-radius: 6px; padding: .75rem 1rem; margin-bottom: .75rem; }
+.good { color: #1b6e2a; }
+.bad { color: #a3261b; }
+textarea, select, input[type=text] { width: 100%; }

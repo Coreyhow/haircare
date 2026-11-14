@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your Recommendations</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<main class="container">
+  <p><a href="{{ url_for('index') }}">&larr; Change answers</a></p>
+  <h1>Your recommendations</h1>
+
+  {% if rules %}
+  <section>
+    <h2>Why</h2>
+    <ul>
+      {% for trait, value, rule in rules %}
+      <li><strong>{{ trait|replace('_', ' ')|capitalize }}: {{ value }}</strong> &mdash; {{ rule.why }}</li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% else %}
+  <p>You didn't pick any hair traits, so products are ranked without personal rules.</p>
+  {% endif %}
+
+  {% if check %}
+  <section class="card">
+    <h2>{{ check.name }}</h2>
+    {% if check.blocked %}
+      <p class="bad">Contains something you chose to exclude: {{ check.blocked|join(', ') }}</p>
+    {% endif %}
+    <p>Score: <strong>{{ check.score }}</strong></p>
+    {% if check.good %}<p class="good">Good for you: {{ check.good|join(', ') }}</p>{% endif %}
+    {% if check.bad %}<p class="bad">May not suit you: {{ check.bad|join(', ') }}</p>{% endif %}
+  </section>
+  {% endif %}
+
+  <section>
+    <h2>Top {{ category or 'products' }}</h2>
+    {% if db_error %}
+      <p class="bad">{{ db_error }}</p>
+    {% elif not recommendations %}
+      <p>No matching products yet. Run the scraper to load products.</p>
+    {% else %}
+      <ol>
+      {% for p in recommendations %}
+        <li class="card">
+          <a href="{{ p.url }}" rel="noopener" target="_blank">{{ p.name }}</a>
+          {% if p.brand %}<span class="muted">by {{ p.brand }}</span>{% endif %}
+          <span class="muted">({{ p.category }}, score {{ p.score }})</span>
+          {% if p.good %}<p class="good">Good for you: {{ p.good[:6]|join(', ') }}</p>{% endif %}
+          {% if p.bad %}<p class="bad">Watch out: {{ p.bad[:6]|join(', ') }}</p>{% endif %}
+          <p class="stores">Find at:
+            {% for store, link in store_links(p.name, p.brand) %}
+              <a href="{{ link }}" rel="noopener nofollow" target="_blank">{{ store }}</a>{% if not loop.last %} &middot; {% endif %}
+            {% endfor %}
+          </p>
+        </li>
+      {% endfor %}
+      </ol>
+    {% endif %}
+  </section>
+
+  <p class="muted">These suggestions are general guidance based on ingredient lists, not medical advice.</p>
+</main>
+</body>
+</html>

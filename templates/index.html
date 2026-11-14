@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Find Your Hair Products</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<main class="container">
+  <h1>Find products for your hair</h1>
+  <p>Answer what you know. Every field is optional.</p>
+
+  <form class="pure-form pure-form-stacked" method="get" action="{{ url_for('results') }}">
+    <fieldset>
+      <legend>Your hair</legend>
+
+      <label for="curl_pattern">Curl pattern</label>
+      <select id="curl_pattern" name="curl_pattern">
+        <option value="">Not sure</option>
+        <optgroup label="Straight (1)">{% for v in ['1A','1B','1C'] %}<option>{{ v }}</option>{% endfor %}</optgroup>
+        <optgroup label="Wavy (2)">{% for v in ['2A','2B','2C'] %}<option>{{ v }}</option>{% endfor %}</optgroup>
+        <optgroup label="Curly (3)">{% for v in ['3A','3B','3C'] %}<option>{{ v }}</option>{% endfor %}</optgroup>
+        <optgroup label="Coily (4)">{% for v in ['4A','4B','4C'] %}<option>{{ v }}</option>{% endfor %}</optgroup>
+      </select>
+
+      <label for="porosity">Porosity</label>
+      <select id="porosity" name="porosity">
+        <option value="">Not sure</option>
+        {% for v in options.porosity %}<option value="{{ v }}">{{ v|capitalize }}</option>{% endfor %}
+      </select>
+      <small>Tip: a clean strand that floats in water for minutes is usually low porosity; one that sinks quickly is high.</small>
+
+      <label for="thickness">Strand thickness</label>
+      <select id="thickness" name="thickness">
+        <option value="">Not sure</option>
+        {% for v in options.thickness %}<option value="{{ v }}">{{ v|capitalize }}</option>{% endfor %}
+      </select>
+
+      <label for="density">Density (how much hair)</label>
+      <select id="density" name="density">
+        <option value="">Not sure</option>
+        {% for v in options.density %}<option value="{{ v }}">{{ v|capitalize }}</option>{% endfor %}
+      </select>
+
+      <label for="scalp">Scalp</label>
+      <select id="scalp" name="scalp">
+        <option value="">Not sure</option>
+        {% for v in options.scalp %}<option value="{{ v }}">{{ v|capitalize }}</option>{% endfor %}
+      </select>
+    </fieldset>
+
+    <fieldset>
+      <legend>Always exclude</legend>
+      <label for="avoid_sulfates" class="pure-checkbox"><input id="avoid_sulfates" type="checkbox" name="avoid_sulfates" value="1"> Sulfates</label>
+      <label for="avoid_silicones" class="pure-checkbox"><input id="avoid_silicones" type="checkbox" name="avoid_silicones" value="1"> Silicones</label>
+      <label for="avoid_fragrance" class="pure-checkbox"><input id="avoid_fragrance" type="checkbox" name="avoid_fragrance" value="1"> Fragrance</label>
+      <label for="avoid_protein" class="pure-checkbox"><input id="avoid_protein" type="checkbox" name="avoid_protein" value="1"> Protein</label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Product type</legend>
+      <label for="category">Show me</label>
+      <select id="category" name="category">
+        <option value="">All products</option>
+        {% for c in categories %}<option value="{{ c }}">{{ c|capitalize }}</option>{% endfor %}
+      </select>
+    </fieldset>
+
+    <fieldset>
+      <legend>Check a product you already have (optional)</legend>
+      <label for="productname">Product name</label>
+      <input id="productname" name="productname" type="text">
+      <label for="ingredients">Ingredient list (paste from the label)</label>
+      <textarea id="ingredients" name="ingredients" rows="5"></textarea>
+    </fieldset>
+
+    <button type="submit" class="pure-button pure-button-primary">Get recommendations</button>
+  </form>
+</main>
+</body>
+</html>

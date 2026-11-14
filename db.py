@@ -17,6 +17,12 @@ def connect(path=None):
     conn.execute("PRAGMA foreign_keys = ON")
     with open(SCHEMA_PATH, encoding="utf-8") as f:
         conn.executescript(f.read())
+    # Upgrade databases created before the 'source' column existed
+    columns = {row["name"] for row in conn.execute("PRAGMA table_info(products)")}
+    if "source" not in columns:
+        conn.execute("ALTER TABLE products ADD COLUMN source TEXT")
+        conn.execute("UPDATE products SET source = 'Open Beauty Facts' WHERE url LIKE '%openbeautyfacts%'")
+        conn.commit()
     return conn
 
 
@@ -35,15 +41,18 @@ def clean_brand(brand):
     return brand or None
 
 
-def save_product(conn, name, brand, category, url, ingredient_names):
-    """Insert or refresh a product and its ingredient list."""
+def save_product(conn, name, brand, category, url, ingredient_names, source=None):
+    """Insert or refresh a product and its ingredient list.
+
+    url is the product's unique key; it may be a non-web id like 'sephora:P123'.
+    """
     brand = clean_brand(brand)
     with conn:
         conn.execute(
-            """INSERT INTO products (name, brand, category, url) VALUES (?, ?, ?, ?)
-               ON CONFLICT(url) DO UPDATE SET name = excluded.name,
-                   brand = excluded.brand, category = excluded.category""",
-            (name, brand, category, url),
+            """INSERT INTO products (name, brand, category, url, source) VALUES (?, ?, ?, ?, ?)
+               ON CONFLICT(url) DO UPDATE SET name = excluded.name, brand = excluded.brand,
+                   category = excluded.category, source = excluded.source""",
+            (name, brand, category, url, source),
         )
         product_id = conn.execute(
             "SELECT productID FROM products WHERE url = ?", (url,)
@@ -62,8 +71,8 @@ def save_product(conn, name, brand, category, url, ingredient_names):
 
 
 def load_products(conn, category=None):
-    """Return [{id, name, brand, category, url, ingredients:[...]}], ingredients in label order."""
-    query = """SELECT p.productID, p.name, p.brand, p.category, p.url, i.ingredientName
+    """Return [{id, name, brand, category, url, source, ingredients:[...]}], ingredients in label order."""
+    query = """SELECT p.productID, p.name, p.brand, p.category, p.url, p.source, i.ingredientName
                FROM products p
                JOIN product_ingredients pi ON pi.productID = p.productID
                JOIN ingredients i ON i.ingredientID = pi.ingredientID"""
@@ -76,7 +85,8 @@ def load_products(conn, category=None):
     for row in conn.execute(query, params):
         p = products.setdefault(row["productID"], {
             "id": row["productID"], "name": row["name"], "brand": row["brand"],
-            "category": row["category"], "url": row["url"], "ingredients": [],
+            "category": row["category"], "url": row["url"], "source": row["source"],
+            "ingredients": [],
         })
         p["ingredients"].append(row["ingredientName"])
     return list(products.values())

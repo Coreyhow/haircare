@@ -28,12 +28,11 @@
   {% if check %}
   <section class="card">
     <h2>{{ check.name }}</h2>
-    {% if check.blocked %}
-      <p class="bad">Contains something you chose to exclude: {{ check.blocked|join(', ') }}</p>
-    {% endif %}
-    <p>Score: <strong>{{ check.score }}</strong></p>
+    {% if check.label %}<p><span class="label label-{{ check.label_class }}">{{ check.label }}</span></p>{% endif %}
+    {% if check.reason %}<p class="reason">{{ check.reason }}</p>{% endif %}
     {% if check.good %}<p class="good">Good for you: {{ check.good|join(', ') }}</p>{% endif %}
     {% if check.bad %}<p class="bad">May not suit you: {{ check.bad|join(', ') }}</p>{% endif %}
+    {% if not rules %}<p class="muted">Pick some hair traits above to see whether this product suits you.</p>{% endif %}
   </section>
   {% endif %}
 
@@ -42,16 +41,26 @@
     {% if db_error %}
       <p class="bad">{{ db_error }}</p>
     {% elif not recommendations %}
-      <p>No matching products yet. Run the scraper to load products.</p>
+      <p>No matching products found. Try a different product type or fewer exclusions.</p>
     {% else %}
       <ol>
       {% for p in recommendations %}
         <li class="card">
-          <a href="{{ p.url }}" rel="noopener" target="_blank">{{ p.name }}</a>
+          {% if p.label %}<span class="label label-{{ p.label_class }}">{{ p.label }}</span>{% endif %}
+          {% if p.url.startswith('http') %}
+            <a href="{{ p.url }}" rel="noopener" target="_blank">{{ p.name }}</a>
+          {% else %}
+            <strong>{{ p.name }}</strong>
+          {% endif %}
           {% if p.brand %}<span class="muted">by {{ p.brand }}</span>{% endif %}
-          <span class="muted">({{ p.category }}, score {{ p.score }})</span>
-          {% if p.good %}<p class="good">Good for you: {{ p.good[:6]|join(', ') }}</p>{% endif %}
-          {% if p.bad %}<p class="bad">Watch out: {{ p.bad[:6]|join(', ') }}</p>{% endif %}
+          <br><span class="muted">{{ p.category|replace('-', ' ')|capitalize }}{% if p.source %} &middot; listed at {{ p.source }}{% endif %}</span>
+          {% if p.reason %}<p class="reason">{{ p.reason }}</p>{% endif %}
+          <details class="help">
+            <summary>See ingredient details</summary>
+            {% if p.good %}<p class="good">Good for you: {{ p.good|join(', ') }}</p>{% endif %}
+            {% if p.bad %}<p class="bad">Watch out: {{ p.bad|join(', ') }}</p>{% endif %}
+            <p class="muted">Full list: {{ p.ingredients|join(', ') }}</p>
+          </details>
           <p class="stores">Find at:
             {% for store, link in store_links(p.name, p.brand) %}
               <a href="{{ link }}" rel="noopener nofollow" target="_blank">{{ store }}</a>{% if not loop.last %} &middot; {% endif %}
@@ -63,7 +72,9 @@
     {% endif %}
   </section>
 
-  <p class="muted">These suggestions are general guidance based on ingredient lists, not medical advice.</p>
+  <p class="muted">These suggestions are general guidance based on ingredient lists, not medical advice.
+    Product data may be out of date; always check the label.</p>
+  {% include "_credits.html" %}
 </main>
 </body>
 </html>

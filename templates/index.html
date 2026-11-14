@@ -24,13 +24,33 @@
         <optgroup label="Curly (3)">{% for v in ['3A','3B','3C'] %}<option>{{ v }}</option>{% endfor %}</optgroup>
         <optgroup label="Coily (4)">{% for v in ['4A','4B','4C'] %}<option>{{ v }}</option>{% endfor %}</optgroup>
       </select>
+      <details class="help">
+        <summary>Not sure? How to tell your curl pattern</summary>
+        <p>Look at your hair after washing and letting it air-dry with no product.</p>
+        <ul>
+          <li><strong>1 &mdash; Straight:</strong> lies flat from root to tip with no bend. 1A is fine and silky, 1C is thicker with a slight bend.</li>
+          <li><strong>2 &mdash; Wavy:</strong> an &ldquo;S&rdquo; shape. 2A is loose and stretched out, 2C has defined S-waves that start near the roots and frizz easily.</li>
+          <li><strong>3 &mdash; Curly:</strong> springy loops or spirals. 3A is wide like a piece of sidewalk chalk, 3C is tight like a pencil or straw.</li>
+          <li><strong>4 &mdash; Coily:</strong> tight coils or zig-zags with lots of shrinkage. 4A coils are about the width of a crochet needle; 4C has a tight zig-zag with little visible curl.</li>
+        </ul>
+        <p>Many people have more than one pattern. Pick the one that covers most of your head.</p>
+      </details>
 
       <label for="porosity">Porosity</label>
       <select id="porosity" name="porosity">
         <option value="">Not sure</option>
         {% for v in options.porosity %}<option value="{{ v }}">{{ v|capitalize }}</option>{% endfor %}
       </select>
-      <small>Tip: a clean strand that floats in water for minutes is usually low porosity; one that sinks quickly is high.</small>
+      <details class="help">
+        <summary>Not sure? How to tell your porosity</summary>
+        <p>Porosity is how easily your hair soaks up and holds onto moisture.</p>
+        <ul>
+          <li><strong>Float test:</strong> drop a clean, product-free strand into a glass of room-temperature water. If it still floats after a few minutes it's probably <strong>low</strong>, if it slowly sinks it's <strong>medium</strong>, and if it sinks right away it's <strong>high</strong>. This is a rough guide, not exact.</li>
+          <li><strong>Low:</strong> water beads on your hair, it takes ages to get wet and to dry, and products tend to sit on top.</li>
+          <li><strong>High:</strong> hair gets wet fast and dries fast, feels dry or frizzy soon after moisturizing, and is often color-treated, bleached or heat-damaged.</li>
+          <li><strong>Medium:</strong> somewhere in between and generally easy to manage.</li>
+        </ul>
+      </details>
 
       <label for="thickness">Strand thickness</label>
       <select id="thickness" name="thickness">
@@ -43,6 +63,14 @@
         <option value="">Not sure</option>
         {% for v in options.density %}<option value="{{ v }}">{{ v|capitalize }}</option>{% endfor %}
       </select>
+      <details class="help">
+        <summary>Not sure? Thickness vs. density</summary>
+        <ul>
+          <li><strong>Thickness</strong> is the width of one strand. Roll a single hair between your fingers: if you can barely feel it, it's <strong>fine</strong>; if it feels like a thread, it's <strong>coarse</strong>.</li>
+          <li><strong>Density</strong> is how many strands you have. Pull your hair back: if you can easily see your scalp it's <strong>thin</strong>; if you can hardly see it at all it's <strong>thick</strong>.</li>
+        </ul>
+        <p>You can have fine strands and still have thick, dense hair.</p>
+      </details>
 
       <label for="scalp">Scalp</label>
       <select id="scalp" name="scalp">
@@ -64,7 +92,7 @@
       <label for="category">Show me</label>
       <select id="category" name="category">
         <option value="">All products</option>
-        {% for c in categories %}<option value="{{ c }}">{{ c|capitalize }}</option>{% endfor %}
+        {% for c in categories %}<option value="{{ c }}">{{ c|replace('-', ' ')|capitalize }}</option>{% endfor %}
       </select>
     </fieldset>
 
@@ -78,6 +106,7 @@
 
     <button type="submit" class="pure-button pure-button-primary">Get recommendations</button>
   </form>
+  {% include "_credits.html" %}
 </main>
 </body>
 </html>

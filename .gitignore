@@ -7,3 +7,5 @@ venv/
 # Downloaded datasets (large; re-download from Kaggle, see README)
 data/
 *.bak
+# Votes collected on the live site; never overwrite them from git
+feedback.db

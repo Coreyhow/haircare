@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ site_name }}{% endblock %}</title>
+  <meta name="description" content="{{ tagline }}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="{{ url_for('index') }}">{{ site_name }}</a>
+    <nav>
+      <a href="{{ url_for('index') }}">Find products</a>
+      <a href="{{ url_for('search', **profile_args) }}">Check a product</a>
+    </nav>
+  </div>
+</header>
+<main class="container">
+  {% block content %}{% endblock %}
+</main>
+<footer class="container site-footer">
+  <p class="muted">General guidance based on ingredient lists, not medical advice. Product data may be out of date; always check the label.</p>
+  {% include "_credits.html" %}
+</footer>
+</body>
+</html>

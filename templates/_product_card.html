@@ -1,0 +1,39 @@
+{# One product result. Expects `p` (a scored product) and `profile_args` in context. #}
+<article class="card product" id="product-{{ p.id }}">
+  <div class="product-head">
+    {% if p.label %}<span class="label label-{{ p.label_class }}">{{ p.label }}</span>{% endif %}
+    <h3 class="product-name">
+      {% if p.url.startswith('http') %}
+        <a href="{{ p.url }}" rel="noopener" target="_blank">{{ p.name }}</a>
+      {% else %}{{ p.name }}{% endif %}
+    </h3>
+    <p class="muted meta">
+      {% if p.brand %}{{ p.brand }} &middot; {% endif %}{{ p.category|replace('-', ' ')|capitalize }}{% if p.source %} &middot; listed at {{ p.source }}{% endif %}
+    </p>
+  </div>
+  {% if p.reason %}<p class="reason">{{ p.reason }}</p>{% endif %}
+  <details class="help">
+    <summary>See ingredient details</summary>
+    {% if p.good %}<p class="good">Good for you: {{ p.good|join(', ') }}</p>{% endif %}
+    {% if p.bad %}<p class="bad">Watch out: {{ p.bad|join(', ') }}</p>{% endif %}
+    <p class="muted">Full list: {{ p.ingredients|join(', ') }}</p>
+  </details>
+  <p class="stores">Find at:
+    {% for store, link in store_links(p.name, p.brand) %}
+      <a href="{{ link }}" rel="noopener nofollow" target="_blank">{{ store }}</a>{% if not loop.last %} &middot; {% endif %}
+    {% endfor %}
+  </p>
+  {% if request.args.get('voted') == p.url %}
+    <p class="feedback thanks" role="status">Thanks! Your feedback helps improve the recommendations.</p>
+  {% else %}
+    <form class="feedback" method="post" action="{{ url_for('give_feedback') }}">
+      <input type="hidden" name="product_url" value="{{ p.url }}">
+      <input type="hidden" name="label" value="{{ p.label or '' }}">
+      <input type="hidden" name="profile" value="{{ profile_query }}">
+      <input type="hidden" name="next" value="{{ request.full_path }}">
+      <span>Tried it? Did it work for your hair?</span>
+      <button class="vote" name="vote" value="up" type="submit" aria-label="Yes, it worked">&#128077;</button>
+      <button class="vote" name="vote" value="down" type="submit" aria-label="No, it didn't work">&#128078;</button>
+    </form>
+  {% endif %}
+</article>

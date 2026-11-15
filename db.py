@@ -70,16 +70,23 @@ def save_product(conn, name, brand, category, url, ingredient_names, source=None
     return product_id
 
 
-def load_products(conn, category=None):
+def load_products(conn, category=None, product_ids=None):
     """Return [{id, name, brand, category, url, source, ingredients:[...]}], ingredients in label order."""
     query = """SELECT p.productID, p.name, p.brand, p.category, p.url, p.source, i.ingredientName
                FROM products p
                JOIN product_ingredients pi ON pi.productID = p.productID
                JOIN ingredients i ON i.ingredientID = pi.ingredientID"""
-    params = ()
+    conditions, params = [], []
     if category:
-        query += " WHERE p.category = ?"
-        params = (category,)
+        conditions.append("p.category = ?")
+        params.append(category)
+    if product_ids is not None:
+        if not product_ids:
+            return []
+        conditions.append(f"p.productID IN ({','.join('?' * len(product_ids))})")
+        params.extend(product_ids)
+    if conditions:
+        query += " WHERE " + " AND ".join(conditions)
     query += " ORDER BY p.productID, pi.position"
     products = {}
     for row in conn.execute(query, params):
@@ -90,3 +97,21 @@ def load_products(conn, category=None):
         })
         p["ingredients"].append(row["ingredientName"])
     return list(products.values())
+
+
+def search_products(conn, text, limit=30):
+    """Products whose brand + name + type contain every word of `text`, closest matches first."""
+    words = [w for w in text.lower().split() if w][:8]
+    if not words:
+        return []
+    like = " AND ".join(
+        "lower(coalesce(brand, '') || ' ' || name || ' ' || category) LIKE ? ESCAPE '\\'" for _ in words)
+    params = ["%" + w.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_") + "%"
+              for w in words]
+    rows = conn.execute(
+        f"SELECT productID FROM products WHERE {like} ORDER BY length(name), name LIMIT ?",
+        (*params, limit),
+    ).fetchall()
+    ids = [r["productID"] for r in rows]
+    by_id = {p["id"]: p for p in load_products(conn, product_ids=ids)}
+    return [by_id[i] for i in ids if i in by_id]

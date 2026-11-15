@@ -1,14 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Your Recommendations</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-<main class="container">
+{% extends "base.html" %}
+{% block title %}Your recommendations &middot; {{ site_name }}{% endblock %}
+{% block content %}
   <p><a href="{{ url_for('index') }}">&larr; Change answers</a></p>
   <h1>Your recommendations</h1>
 
@@ -32,49 +24,25 @@
     {% if check.reason %}<p class="reason">{{ check.reason }}</p>{% endif %}
     {% if check.good %}<p class="good">Good for you: {{ check.good|join(', ') }}</p>{% endif %}
     {% if check.bad %}<p class="bad">May not suit you: {{ check.bad|join(', ') }}</p>{% endif %}
-    {% if not rules %}<p class="muted">Pick some hair traits above to see whether this product suits you.</p>{% endif %}
+    {% if not rules %}<p class="muted">Pick some hair traits to see whether this product suits you.</p>{% endif %}
   </section>
   {% endif %}
 
+  <form class="pure-form search-form" method="get" action="{{ url_for('search') }}" role="search">
+    <label for="q" class="visually-hidden">Check a product you own</label>
+    <input id="q" name="q" type="search" placeholder="Check a product you own, e.g. Briogeo shampoo">
+    {% for key, value in profile_args.items() %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endfor %}
+    <button type="submit" class="pure-button">Search</button>
+  </form>
+
   <section>
-    <h2>Top {{ category or 'products' }}</h2>
+    <h2>Top {{ (category or 'products')|replace('-', ' ') }}</h2>
     {% if db_error %}
       <p class="bad">{{ db_error }}</p>
     {% elif not recommendations %}
       <p>No matching products found. Try a different product type or fewer exclusions.</p>
     {% else %}
-      <ol>
-      {% for p in recommendations %}
-        <li class="card">
-          {% if p.label %}<span class="label label-{{ p.label_class }}">{{ p.label }}</span>{% endif %}
-          {% if p.url.startswith('http') %}
-            <a href="{{ p.url }}" rel="noopener" target="_blank">{{ p.name }}</a>
-          {% else %}
-            <strong>{{ p.name }}</strong>
-          {% endif %}
-          {% if p.brand %}<span class="muted">by {{ p.brand }}</span>{% endif %}
-          <br><span class="muted">{{ p.category|replace('-', ' ')|capitalize }}{% if p.source %} &middot; listed at {{ p.source }}{% endif %}</span>
-          {% if p.reason %}<p class="reason">{{ p.reason }}</p>{% endif %}
-          <details class="help">
-            <summary>See ingredient details</summary>
-            {% if p.good %}<p class="good">Good for you: {{ p.good|join(', ') }}</p>{% endif %}
-            {% if p.bad %}<p class="bad">Watch out: {{ p.bad|join(', ') }}</p>{% endif %}
-            <p class="muted">Full list: {{ p.ingredients|join(', ') }}</p>
-          </details>
-          <p class="stores">Find at:
-            {% for store, link in store_links(p.name, p.brand) %}
-              <a href="{{ link }}" rel="noopener nofollow" target="_blank">{{ store }}</a>{% if not loop.last %} &middot; {% endif %}
-            {% endfor %}
-          </p>
-        </li>
-      {% endfor %}
-      </ol>
+      {% for p in recommendations %}{% include "_product_card.html" %}{% endfor %}
     {% endif %}
   </section>
-
-  <p class="muted">These suggestions are general guidance based on ingredient lists, not medical advice.
-    Product data may be out of date; always check the label.</p>
-  {% include "_credits.html" %}
-</main>
-</body>
-</html>
+{% endblock %}

@@ -1,16 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Find Your Hair Products</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-<main class="container">
-  <h1>Find products for your hair</h1>
-  <p>Answer what you know. Every field is optional.</p>
+{% extends "base.html" %}
+{% block content %}
+  <section class="hero">
+    <h1>{{ tagline }}</h1>
+    <p>Answer a few questions about your hair. We check the ingredient lists of {{ product_count }} shampoos,
+      conditioners, leave-ins and more, and tell you which suit you and why.</p>
+    <p class="muted">Every question is optional. Not sure of an answer? Tap the &ldquo;Not sure?&rdquo; guides.</p>
+  </section>
 
   <form class="pure-form pure-form-stacked" method="get" action="{{ url_for('results') }}">
     <fieldset>
@@ -85,6 +80,9 @@
       <label for="avoid_silicones" class="pure-checkbox"><input id="avoid_silicones" type="checkbox" name="avoid_silicones" value="1"> Silicones</label>
       <label for="avoid_fragrance" class="pure-checkbox"><input id="avoid_fragrance" type="checkbox" name="avoid_fragrance" value="1"> Fragrance</label>
       <label for="avoid_protein" class="pure-checkbox"><input id="avoid_protein" type="checkbox" name="avoid_protein" value="1"> Protein</label>
+      <label for="avoid_isothiazolinones" class="pure-checkbox"><input id="avoid_isothiazolinones" type="checkbox" name="avoid_isothiazolinones" value="1"> Methylisothiazolinone (MI/MCI) preservatives</label>
+      <label for="avoid_formaldehyde" class="pure-checkbox"><input id="avoid_formaldehyde" type="checkbox" name="avoid_formaldehyde" value="1"> Formaldehyde-releasing preservatives</label>
+      <small>The two preservative types are the most common causes of scalp allergies to hair products. If a dermatologist patch test found you're allergic, tick them.</small>
     </fieldset>
 
     <fieldset>
@@ -97,16 +95,15 @@
     </fieldset>
 
     <fieldset>
-      <legend>Check a product you already have (optional)</legend>
+      <legend>Paste an ingredient list (optional)</legend>
+      <p class="muted">Have a product we don't list? Paste its label to check it.
+        Or <a href="{{ url_for('search') }}">search for a product by name</a>.</p>
       <label for="productname">Product name</label>
       <input id="productname" name="productname" type="text">
       <label for="ingredients">Ingredient list (paste from the label)</label>
       <textarea id="ingredients" name="ingredients" rows="5"></textarea>
     </fieldset>
 
-    <button type="submit" class="pure-button pure-button-primary">Get recommendations</button>
+    <button type="submit" class="pure-button pure-button-primary big-button">Get recommendations</button>
   </form>
-  {% include "_credits.html" %}
-</main>
-</body>
-</html>
+{% endblock %}

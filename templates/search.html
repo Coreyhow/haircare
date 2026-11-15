@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Check a product &middot; {{ site_name }}{% endblock %}
+{% block content %}
+  <h1>Check a product you own</h1>
+  <p>Search by brand or product name to see whether it suits your hair.</p>
+
+  <form class="pure-form search-form" method="get" action="{{ url_for('search') }}" role="search">
+    <label for="q" class="visually-hidden">Product or brand</label>
+    <input id="q" name="q" type="search" value="{{ query }}" placeholder="e.g. Briogeo shampoo" autofocus>
+    {% for key, value in profile_args.items() %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endfor %}
+    <button type="submit" class="pure-button pure-button-primary">Search</button>
+  </form>
+
+  {% if not has_profile %}
+    <p class="notice">Tip: <a href="{{ url_for('index') }}">answer the hair questions first</a> and your search results will say whether each product suits you.</p>
+  {% endif %}
+
+  {% if db_error %}
+    <p class="bad">{{ db_error }}</p>
+  {% elif query %}
+    {% if products %}
+      <p class="muted">{{ products|length }}{% if products|length == limit %}+{% endif %} result{{ 's' if products|length != 1 }} for &ldquo;{{ query }}&rdquo;</p>
+      {% for p in products %}{% include "_product_card.html" %}{% endfor %}
+    {% else %}
+      <p>No products found for &ldquo;{{ query }}&rdquo;. Try just the brand name, or
+        <a href="{{ url_for('index') }}">paste its ingredient list</a> to check it.</p>
+    {% endif %}
+  {% endif %}
+{% endblock %}
